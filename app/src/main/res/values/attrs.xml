@@ -1,0 +1,26 @@
+<resources>
+
+    <declare-styleable name="CircleProgressAttrs">
+        <attr name="circle_color" format="color" />
+        <attr name="progress_color" format="color" />
+        <attr name="progress" format="integer" />
+        <attr name="star_angle" format="integer" />
+        <attr name="stroke_progress">
+            <enum name="small" value="8" />
+            <enum name="medium" value="16" />
+            <enum name="big" value="32" />
+        </attr>
+
+
+    </declare-styleable>
+
+    <declare-styleable name="CustomLayoutLP">
+        <attr name="android:layout_gravity" />
+        <attr name="layout_position">
+            <enum name="middle" value="0" />
+            <enum name="left" value="1" />
+            <enum name="right" value="2" />
+        </attr>
+    </declare-styleable>
+
+</resources>
