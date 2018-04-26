@@ -1,4 +1,4 @@
-package com.example.clicea.circleprogresslayout;
+package com.example.clicea.circleprogresslayout.likePitz;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,13 +8,14 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.clicea.circleprogresslayout.R;
+
 
 /**
- * Created by ccontreras on 29/09/2015.
- */
+* Created by clicea on 29/09/2015.
+*/
 public class CircleProgressLayout extends ViewGroup {
-    private final String TAG = this.getClass().getSimpleName();
-    CircleProgressView circle;
+    private CircleProgressView circle;
 
 
     /**
@@ -107,7 +108,7 @@ public class CircleProgressLayout extends ViewGroup {
         maxWidth += mLeftWidth + mRightWidth;
 
         // Check against our minimum height and width
-        maxHeight =maxWidth;
+        maxHeight = maxWidth;
         maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
 
         // Report our final dimensions.
@@ -179,7 +180,7 @@ public class CircleProgressLayout extends ViewGroup {
         return circle.getProgress();
     }
 
-    public void setProgress(float progress) {
+    public void setProgress(int progress) {
         circle.setProgress(progress);
 
     }
@@ -208,9 +209,18 @@ public class CircleProgressLayout extends ViewGroup {
         return circle.getStartAngle();
     }
 
+    public void setDegrees(int degrees) {
+        circle.setDegrees(degrees);
+    }
+
+    public int getDegrees() {
+        return circle.getDegrees();
+    }
+
     public void setStartAngle(int startAngle) {
         circle.setStartAngle(startAngle);
     }
+
 
     public int getShapeColor() {
         return circle.getShapeColor();
@@ -220,7 +230,7 @@ public class CircleProgressLayout extends ViewGroup {
         circle.setShapeColor(shapeColor);
     }
 
-    public void setIndeterminate(boolean isIndeterminate){
+    public void setIndeterminate(boolean isIndeterminate) {
         circle.setIndeterminate(isIndeterminate);
     }
 
@@ -285,13 +295,13 @@ public class CircleProgressLayout extends ViewGroup {
          */
         public int gravity = Gravity.CENTER;
 
-        public static int POSITION_MIDDLE = 0;
-        public static int POSITION_LEFT = 1;
-        public static int POSITION_RIGHT = 2;
+        static final int POSITION_MIDDLE = 0;
+         static final int POSITION_LEFT = 1;
+         static final int POSITION_RIGHT = 2;
 
         public int position = POSITION_MIDDLE;
 
-        public LayoutParams(Context c, AttributeSet attrs) {
+         LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
 
             // Pull the layout param values from the layout XML during
@@ -303,11 +313,11 @@ public class CircleProgressLayout extends ViewGroup {
             a.recycle();
         }
 
-        public LayoutParams(int width, int height) {
+         LayoutParams(int width, int height) {
             super(width, height);
         }
 
-        public LayoutParams(ViewGroup.LayoutParams source) {
+         LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
         }
     }

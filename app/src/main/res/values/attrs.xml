@@ -1,19 +1,43 @@
 <resources>
 
+    <!--Circle progress view attributes-->
+    <!--<declare-styleable name="CircleProgressAttrs">-->
+        <!--<attr name="circle_color" format="color" />-->
+        <!--<attr name="progress_color" format="color" />-->
+        <!--<attr name="percentage_color" format="color" />-->
+        <!--<attr name="progress" format="integer" />-->
+        <!--<attr name="star_angle" format="integer" />-->
+        <!--<attr name="max" format="integer" />-->
+        <!--<attr name="indeterminate" format="boolean" />-->
+        <!--<attr name="see_percentage" format="boolean" />-->
+        <!--<attr name="stroke_progress" format="integer"/>-->
+
+    <!--</declare-styleable>-->
+
+
+    <!--Circle progress view attributes-->
     <declare-styleable name="CircleProgressAttrs">
-        <attr name="circle_color" format="color" />
-        <attr name="progress_color" format="color" />
-        <attr name="progress" format="integer" />
-        <attr name="star_angle" format="integer" />
-        <attr name="stroke_progress">
-            <enum name="small" value="8" />
-            <enum name="medium" value="16" />
-            <enum name="big" value="32" />
-        </attr>
+        <attr name="cpl_circle_color" format="color" />
+        <attr name="cpl_progress_color" format="color" />
+        <attr name="cpl_percentage_color" format="color" />
+        <attr name="cpl_progress" format="integer" />
+        <attr name="cpl_star_angle" format="integer" />
+        <attr name="cpl_max" format="integer" />
+        <attr name="cpl_indeterminate" format="boolean" />
+        <attr name="cpl_see_percentage" format="boolean" />
+        <attr name="cpl_stroke_progress" format="integer" />
 
 
+        <attr name="cpl_track_color" format="color" />
+        <attr name="cpl_round_corners" format="boolean" />
+        <attr name="cpl_init_gradient_progress_color" format="color" />
+        <attr name="cpl_end_gradient_progress_color" format="color" />
+        <attr name="cpl_degrees" format="integer" />
     </declare-styleable>
+    <!--Circle progress layout attributes -->
 
+
+    <!--Circle progress layout attributes -->
     <declare-styleable name="CustomLayoutLP">
         <attr name="android:layout_gravity" />
         <attr name="layout_position">

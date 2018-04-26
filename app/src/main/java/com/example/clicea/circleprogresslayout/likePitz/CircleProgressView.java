@@ -1,49 +1,54 @@
-package com.example.clicea.circleprogresslayout;
+package com.example.clicea.circleprogresslayout.likePitz;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.SweepGradient;
+import android.graphics.Shader;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
+import com.example.clicea.circleprogresslayout.R;
+
+
 /**
- * Created by cesar licea 25/09/2015.
+ * Created by cesar Licea 25/09/2015.
  */
 public class CircleProgressView extends View {
-    private final String TAG = this.getClass().getSimpleName();
+
 
     //propiedades que puede manipular el usuario desde java o xml
     private int startAngle;
+    private int degrees;
     private int progressColor;
 
 
     private int percentageColor;
     private int strokeProgress;
     private float mProgress;
-    private int mProgressEfect;
+    private int mProgressEffect;
     private int shapeColor;
     private int max;
 
 
     //private boolean isIndeterminate;
     private boolean seePercentage;
-    int positionTextAngle;
 
-    private boolean efect = true;
+    private boolean effect = false;
     private RectF mOval;
 
 
-    private int stroke = 3;
+    private final int stroke = 3;
     private int space = strokeProgress + 4;
 
 
@@ -55,7 +60,14 @@ public class CircleProgressView extends View {
     private Paint paintShapeIn;
     private Paint paintText;
     private Paint mPaintProgress;
-    private Paint mPaintProgressEfect;
+    private Paint mPaintProgressEffect;
+    private int trackColor;
+    // progress gradient colors
+    private int initColor;
+    private int endColor;
+    // progress round corners
+    private boolean roundCorners;
+
 
     public CircleProgressView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -72,14 +84,17 @@ public class CircleProgressView extends View {
             setShapeColor(a.getColor(R.styleable.CircleProgressAttrs_cpl_circle_color, Color.GRAY));
             setProgressColor(a.getColor(R.styleable.CircleProgressAttrs_cpl_progress_color, Color.BLUE));
             setPercentageColor(a.getColor(R.styleable.CircleProgressAttrs_cpl_percentage_color, Color.BLACK));
-            setProgress(a.getInt(R.styleable.CircleProgressAttrs_cpl_progress, 50));
+            setProgress(a.getInt(R.styleable.CircleProgressAttrs_cpl_progress, 0));
+            setRoundCorners(a.getBoolean(R.styleable.CircleProgressAttrs_cpl_round_corners, false));
+            setInitColor(a.getColor(R.styleable.CircleProgressAttrs_cpl_init_gradient_progress_color, Color.RED));
+            setEndColor(a.getColor(R.styleable.CircleProgressAttrs_cpl_end_gradient_progress_color, Color.YELLOW));
             setStrokeProgress(a.getInt(R.styleable.CircleProgressAttrs_cpl_stroke_progress, 8));
             setMax(a.getInt(R.styleable.CircleProgressAttrs_cpl_max, 100));
             setIndeterminate(a.getBoolean(R.styleable.CircleProgressAttrs_cpl_indeterminate, false));
             setSeePercentage(a.getBoolean(R.styleable.CircleProgressAttrs_cpl_see_percentage, false));
             setStartAngle(a.getInt(R.styleable.CircleProgressAttrs_cpl_star_angle, 270));
-
-
+            setDegrees(a.getInt(R.styleable.CircleProgressAttrs_cpl_degrees, 360));
+            setTrackColor(a.getInt(R.styleable.CircleProgressAttrs_cpl_track_color, Color.GRAY));
 
         } finally {
             // TypedArray objects are shared and must be recycled.
@@ -92,12 +107,12 @@ public class CircleProgressView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int shapeWidth = 100;
 
-        int minw = shapeWidth + getPaddingLeft() + getPaddingRight();
-        int w = resolveSizeAndState(minw, widthMeasureSpec, 0);
+        int minW = shapeWidth + getPaddingLeft() + getPaddingRight();
+        int w = resolveSizeAndState(minW, widthMeasureSpec, 0);
 
         int shapeHeight = 10;
-        int minh = shapeHeight + getPaddingBottom() + getPaddingTop();
-        int h = resolveSizeAndState(minh, heightMeasureSpec, 0);
+        int minH = shapeHeight + getPaddingBottom() + getPaddingTop();
+        int h = resolveSizeAndState(minH, heightMeasureSpec, 0);
 
 
         widthCircle = w - (stroke * 2);
@@ -116,6 +131,7 @@ public class CircleProgressView extends View {
         int G = Integer.parseInt(PrimaryToTransparentPrimary.substring(4, 5), 16);
         int B = Integer.parseInt(PrimaryToTransparentPrimary.substring(6, 7), 16);
 
+        //TODO ver si agrego el degradado
         int barColors[] = {
                 // Color.WHITE, getProgressColor()
                 getProgressColor(), getProgressColor()
@@ -131,28 +147,33 @@ public class CircleProgressView extends View {
         mOval.set(startProgressX, startProgressX, endProgressX, endProgressX);
 
 
-        mPaintProgressEfect = new Paint();
-        mPaintProgressEfect.setAntiAlias(true);
-        mPaintProgressEfect.setStyle(Paint.Style.STROKE);
+        mPaintProgressEffect = new Paint();
+        mPaintProgressEffect.setAntiAlias(true);
+        mPaintProgressEffect.setStyle(Paint.Style.STROKE);
 
-        // mPaintProgressEfect.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
-        mPaintProgressEfect.setStrokeCap(Paint.Cap.ROUND);
-        mPaintProgressEfect.setStrokeWidth(getStrokeProgress());
-        mPaintProgressEfect.setColor(Color.RED);
+        // mPaintProgressEffect.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
+        mPaintProgressEffect.setStrokeCap(Paint.Cap.ROUND);
+        mPaintProgressEffect.setStrokeWidth(getStrokeProgress());
+        mPaintProgressEffect.setColor(getTrackColor());
 
 
         mPaintProgress = new Paint();
         mPaintProgress.setAntiAlias(true);
         mPaintProgress.setStyle(Paint.Style.STROKE);
 
-        // mPaintProgress.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
-        mPaintProgress.setStrokeCap(Paint.Cap.ROUND);
+        if (isRoundCorners()) {
+            mPaintProgress.setStrokeCap(Paint.Cap.ROUND);
+        } else {
+            mPaintProgress.setStrokeCap(Paint.Cap.SQUARE);
+        }
+
         mPaintProgress.setStrokeWidth(getStrokeProgress());
         mPaintProgress.setColor(getProgressColor());
 
 
         float centerGradient = mOval.centerX();
-        mPaintProgress.setShader(new SweepGradient(centerGradient, centerGradient, barColors, null));
+//        mPaintProgress.setShader(new SweepGradient(centerGradient, centerGradient, barColors, null));
+        mPaintProgress.setShader(new LinearGradient(0, 0, 0, getHeight(), getInitColor(), getEndColor(), Shader.TileMode.MIRROR));
 
         Matrix matrix = new Matrix();
         mPaintProgress.getShader().getLocalMatrix(matrix);
@@ -195,21 +216,20 @@ public class CircleProgressView extends View {
         int centerX = widthContent / 2;
 
 
-        float end = 360f * ((float) getProgress() / 100);
-        float endEfect = 360f * ((float) getmProgressEfect() / 100);
+        float end = degrees * ((float) getProgress() / 100);
+        float endEffect = degrees * ((float) getProgressEffect() / 100);
 
         if (isSeePercentage()) {
 
 
-            int r = RadioSizeIn;
             end = 330f * ((float) getProgress() / 100);
-            endEfect = 330f * ((float) getmProgressEfect() / 100);
+            endEffect = 330f * ((float) getProgressEffect() / 100);
             float angleText = getStartAngle() + end + 15;
 
-            positionTextAngle = (int) ((angleText) > 360 ? (angleText) - 360 : (angleText));
+            int positionTextAngle = (int) ((angleText) > degrees ? (angleText) - degrees : (angleText));
 
-            int x = (int) (r * Math.cos(Math.toRadians(positionTextAngle)) + centerX) - 4;
-            int y = (int) (r * Math.sin(Math.toRadians(positionTextAngle)) + centerX);
+            int x = (int) (RadioSizeIn * Math.cos(Math.toRadians(positionTextAngle)) + centerX) - 4;
+            int y = (int) (RadioSizeIn * Math.sin(Math.toRadians(positionTextAngle)) + centerX);
 
 
             if (positionTextAngle > 85 && positionTextAngle <= 275) {
@@ -222,9 +242,9 @@ public class CircleProgressView extends View {
                 }
 
             }
-            if (efect) {
-                x = (int) (r * Math.cos(Math.toRadians(getStartAngle() - 15)) + centerX) - 4;
-                y = (int) (r * Math.sin(Math.toRadians(getStartAngle() - 15)) + centerX);
+            if (effect) {
+                x = (int) (RadioSizeIn * Math.cos(Math.toRadians(getStartAngle() - 15)) + centerX) - 4;
+                y = (int) (RadioSizeIn * Math.sin(Math.toRadians(getStartAngle() - 15)) + centerX);
 
             }
 
@@ -235,14 +255,14 @@ public class CircleProgressView extends View {
         canvas.drawCircle(centerX, centerX, RadioSizeIn, paintShapeIn);
         canvas.drawCircle(centerX, centerX, RadioSizeEx, paintShapeEx);
 
-        canvas.drawArc(mOval, getStartAngle(), 360f, false, this.mPaintProgressEfect);
+        canvas.drawArc(mOval, getStartAngle(), degrees, false, this.mPaintProgressEffect);
 
         canvas.drawArc(mOval, getStartAngle(), end, false, this.mPaintProgress);
 
 
-        if (efect) {
-            canvas.drawArc(mOval, getStartAngle(), endEfect, false, this.mPaintProgressEfect);
-        }
+        /*if (effect) {
+            canvas.drawArc(mOval, getStartAngle(), endEffect, false, this.mPaintProgressEffect);
+        }*/
 
     }
 
@@ -251,11 +271,11 @@ public class CircleProgressView extends View {
     }
 
     public void setProgress(float progress) {
-        if (progress <= 1 && efect) {
-            setEfect();
+        if (progress <= 1 && effect) {
+            setEffect();
             this.mProgress = 100;
 
-        } else if (!efect) {
+        } else if (!effect) {
             if (getMax() > 0) {
                 progress = progress * 100 / getMax();
             }
@@ -265,7 +285,6 @@ public class CircleProgressView extends View {
 
     }
 
-
     public void setProgressWithAnimation(float progress) {
         ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(this, "progress", progress);
         objectAnimator.setDuration(1500);
@@ -273,19 +292,27 @@ public class CircleProgressView extends View {
         objectAnimator.start();
     }
 
-    public int getmProgressEfect() {
-        return mProgressEfect;
+    private int getProgressEffect() {
+        return mProgressEffect;
     }
 
-    public void setmProgressEfect(int mProgressEfect) {
+    private void setProgressEffect(int mProgressEffect) {
         if (getMax() > 0) {
-            mProgressEfect = mProgressEfect * 100 / getMax();
+            mProgressEffect = mProgressEffect * 100 / getMax();
         }
 
-        this.mProgressEfect = mProgressEfect;
+        this.mProgressEffect = mProgressEffect;
         invalidate();
     }
 
+
+    public void setTrackColor(int color) {
+        trackColor = color;
+    }
+
+    public int getTrackColor() {
+        return trackColor;
+    }
 
     public int getStrokeProgress() {
         return strokeProgress;
@@ -305,7 +332,6 @@ public class CircleProgressView extends View {
         invalidate();
     }
 
-
     public int getStartAngle() {
         return startAngle;
     }
@@ -316,6 +342,14 @@ public class CircleProgressView extends View {
         invalidate();
     }
 
+    public int getDegrees() {
+        return degrees;
+    }
+
+    public void setDegrees(int degrees) {
+        this.degrees = degrees;
+    }
+
     public int getShapeColor() {
         return shapeColor;
     }
@@ -323,6 +357,30 @@ public class CircleProgressView extends View {
     public void setShapeColor(int shapeColor) {
         this.shapeColor = shapeColor;
         invalidate();
+    }
+
+    public int getInitColor() {
+        return initColor;
+    }
+
+    public void setInitColor(int initColor) {
+        this.initColor = initColor;
+    }
+
+    public int getEndColor() {
+        return endColor;
+    }
+
+    public void setEndColor(int endColor) {
+        this.endColor = endColor;
+    }
+
+    public boolean isRoundCorners() {
+        return roundCorners;
+    }
+
+    public void setRoundCorners(boolean roundCorners) {
+        this.roundCorners = roundCorners;
     }
 
     public boolean isSeePercentage() {
@@ -350,8 +408,8 @@ public class CircleProgressView extends View {
     }
 
 
-    //metodos para hacer el progress indeterminado
-    Handler handler = new Handler() {
+    //métodos para hacer el progress indeterminado
+    private final Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             setProgress(msg.what);
@@ -363,7 +421,6 @@ public class CircleProgressView extends View {
             Thread threadProgress = new Thread(new Runnable() {
                 @Override
                 public void run() {
-
                     int progress = 1;
                     while (true) {
                         progress++;
@@ -380,7 +437,6 @@ public class CircleProgressView extends View {
 
                     }
 
-
                 }
             });
             threadProgress.setName("CircleProgressView");
@@ -389,16 +445,16 @@ public class CircleProgressView extends View {
     }
 
 
-    //metodos para que el efecto de inicio se ejecute
-    Handler handler1 = new Handler() {
+    //métodos para que el efecto de inicio se ejecute
+    private final Handler handler1 = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            setmProgressEfect(msg.what);
+            setProgressEffect(msg.what);
         }
     };
 
-    public void setEfect() {
-        efect = true;
+    private void setEffect() {
+        effect = true;
         Thread threadProgress = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -447,10 +503,10 @@ public class CircleProgressView extends View {
                 }
 
 
-                efect = false;
+                effect = false;
             }
         });
-        threadProgress.setName("CircleProgressView Efect");
+        threadProgress.setName("CircleProgressView Effect");
         threadProgress.start();
 
     }
@@ -459,6 +515,7 @@ public class CircleProgressView extends View {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInt,
                 getContext().getResources().getDisplayMetrics());
     }
+
 
 }
 
