@@ -2,15 +2,15 @@
 
     <!--Circle progress view attributes-->
     <!--<declare-styleable name="CircleProgressAttrs">-->
-        <!--<attr name="circle_color" format="color" />-->
-        <!--<attr name="progress_color" format="color" />-->
-        <!--<attr name="percentage_color" format="color" />-->
-        <!--<attr name="progress" format="integer" />-->
-        <!--<attr name="star_angle" format="integer" />-->
-        <!--<attr name="max" format="integer" />-->
-        <!--<attr name="indeterminate" format="boolean" />-->
-        <!--<attr name="see_percentage" format="boolean" />-->
-        <!--<attr name="stroke_progress" format="integer"/>-->
+    <!--<attr name="circle_color" format="color" />-->
+    <!--<attr name="progress_color" format="color" />-->
+    <!--<attr name="percentage_color" format="color" />-->
+    <!--<attr name="progress" format="integer" />-->
+    <!--<attr name="star_angle" format="integer" />-->
+    <!--<attr name="max" format="integer" />-->
+    <!--<attr name="indeterminate" format="boolean" />-->
+    <!--<attr name="see_percentage" format="boolean" />-->
+    <!--<attr name="stroke_progress" format="integer"/>-->
 
     <!--</declare-styleable>-->
 
@@ -18,33 +18,38 @@
     <!--Circle progress view attributes-->
     <declare-styleable name="CircleProgressAttrs">
         <attr name="cpl_circle_color" format="color" />
-        <attr name="cpl_progress_color" format="color" />
-        <attr name="cpl_percentage_color" format="color" />
+        <attr name="cpl_init_progress_color" format="color" />
+        <attr name="cpl_end_progress_color" format="color" />
+        <attr name="cpl_track_color" format="color" />
+
         <attr name="cpl_progress" format="integer" />
         <attr name="cpl_star_angle" format="integer" />
-        <attr name="cpl_max" format="integer" />
-        <attr name="cpl_indeterminate" format="boolean" />
-        <attr name="cpl_see_percentage" format="boolean" />
         <attr name="cpl_stroke_progress" format="integer" />
-
-
-        <attr name="cpl_track_color" format="color" />
-        <attr name="cpl_round_corners" format="boolean" />
-        <attr name="cpl_init_gradient_progress_color" format="color" />
-        <attr name="cpl_end_gradient_progress_color" format="color" />
         <attr name="cpl_degrees" format="integer" />
-    </declare-styleable>
-    <!--Circle progress layout attributes -->
+        <attr name="cpl_max" format="integer" />
+
+        <attr name="cpl_round_corners" format="boolean" />
+        <attr name="cpl_indeterminate" format="boolean" />
 
 
-    <!--Circle progress layout attributes -->
-    <declare-styleable name="CustomLayoutLP">
-        <attr name="android:layout_gravity" />
-        <attr name="layout_position">
-            <enum name="middle" value="0" />
-            <enum name="left" value="1" />
-            <enum name="right" value="2" />
+        <attr name="cpl_gradient" format="enum">
+            <enum name="linear" value="0" />
+            <enum name="sweep" value="1" />
+            <enum name="radial" value="2" />
         </attr>
+
     </declare-styleable>
+    <!--Circle progress layout attributes -->
+
+
+    <!--Circle progress layout attributes -->
+    <!--<declare-styleable name="CustomLayoutLP">-->
+        <!--<attr name="android:layout_gravity" />-->
+        <!--<attr name="layout_position">-->
+            <!--<enum name="middle" value="0" />-->
+            <!--<enum name="left" value="1" />-->
+            <!--<enum name="right" value="2" />-->
+        <!--</attr>-->
+    <!--</declare-styleable>-->
 
 </resources>

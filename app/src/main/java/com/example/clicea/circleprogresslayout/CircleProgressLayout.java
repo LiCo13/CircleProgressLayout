@@ -1,7 +1,6 @@
 package com.example.clicea.circleprogresslayout;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -10,11 +9,12 @@ import android.view.ViewGroup;
 
 
 /**
- * Created by ccontreras on 29/09/2015.
+ * Created by clicea on 29/09/2015.
  */
+@SuppressWarnings("unused")
 public class CircleProgressLayout extends ViewGroup {
-    private final String TAG = this.getClass().getSimpleName();
-    CircleProgressView circle;
+
+    private CircleProgressView circle;
 
 
     /**
@@ -46,7 +46,6 @@ public class CircleProgressLayout extends ViewGroup {
         super(context, attrs, defStyle);
         circle = new CircleProgressView(context, attrs);
         addView(circle);
-
     }
 
     /**
@@ -86,17 +85,16 @@ public class CircleProgressLayout extends ViewGroup {
 
                 // Update our size information based on the layout params.  Children
                 // that asked to be positioned on the left or right go in those gutters.
-                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                if (lp.position == LayoutParams.POSITION_LEFT) {
-                    mLeftWidth += Math.max(maxWidth,
-                            child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
-                } else if (lp.position == LayoutParams.POSITION_RIGHT) {
-                    mRightWidth += Math.max(maxWidth,
-                            child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
-                } else {
-                    maxWidth = Math.max(maxWidth,
-                            child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+                final CircleLayoutParams lp = (CircleLayoutParams) child.getLayoutParams();
+                if (i != 0) {
+                    int margin = getStrokeProgress() + 4;
+                    lp.setMargins(margin, margin, margin, margin);
                 }
+
+
+                maxWidth = Math.max(maxWidth,
+                        child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+
                 maxHeight = Math.max(maxHeight,
                         child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
                 childState = combineMeasuredStates(childState, child.getMeasuredState());
@@ -107,7 +105,7 @@ public class CircleProgressLayout extends ViewGroup {
         maxWidth += mLeftWidth + mRightWidth;
 
         // Check against our minimum height and width
-        maxHeight =maxWidth;
+        maxHeight = maxWidth;
         maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
 
         // Report our final dimensions.
@@ -138,7 +136,7 @@ public class CircleProgressLayout extends ViewGroup {
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() != GONE) {
-                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                final CircleLayoutParams lp = (CircleLayoutParams) child.getLayoutParams();
 
                 final int width = child.getMeasuredWidth();
                 int height = child.getMeasuredHeight();
@@ -148,18 +146,9 @@ public class CircleProgressLayout extends ViewGroup {
                 }
 
                 // Compute the frame in which we are placing this child.
-                if (lp.position == LayoutParams.POSITION_LEFT) {
-                    mTmpContainerRect.left = leftPos + lp.leftMargin;
-                    mTmpContainerRect.right = leftPos + width + lp.rightMargin;
-                    leftPos = mTmpContainerRect.right;
-                } else if (lp.position == LayoutParams.POSITION_RIGHT) {
-                    mTmpContainerRect.right = rightPos - lp.rightMargin;
-                    mTmpContainerRect.left = rightPos - width - lp.leftMargin;
-                    rightPos = mTmpContainerRect.left;
-                } else {
-                    mTmpContainerRect.left = middleLeft + lp.leftMargin;
-                    mTmpContainerRect.right = middleRight - lp.rightMargin;
-                }
+
+                mTmpContainerRect.left = middleLeft + lp.leftMargin;
+                mTmpContainerRect.right = middleRight - lp.rightMargin;
                 mTmpContainerRect.top = parentTop + lp.topMargin;
                 mTmpContainerRect.bottom = parentBottom - lp.bottomMargin;
 
@@ -174,86 +163,6 @@ public class CircleProgressLayout extends ViewGroup {
         }
     }
 
-
-    public float getProgress() {
-        return circle.getProgress();
-    }
-
-    public void setProgress(float progress) {
-        circle.setProgress(progress);
-
-    }
-
-    public void setProgressWithAnimation(int strokeProgress) {
-        circle.setProgressWithAnimation(strokeProgress);
-    }
-
-    public int getStrokeProgress() {
-        return circle.getStrokeProgress();
-    }
-
-    public void setStrokeProgress(int strokeProgress) {
-        circle.setStrokeProgress(strokeProgress);
-    }
-
-    public int getProgressColor() {
-        return circle.getProgressColor();
-    }
-
-    public void setProgressColor(int progressColor) {
-        circle.setProgressColor(progressColor);
-    }
-
-    public int getStartAngle() {
-        return circle.getStartAngle();
-    }
-
-    public void setStartAngle(int startAngle) {
-        circle.setStartAngle(startAngle);
-    }
-
-    public int getShapeColor() {
-        return circle.getShapeColor();
-    }
-
-    public void setShapeColor(int shapeColor) {
-        circle.setShapeColor(shapeColor);
-    }
-
-    public void setIndeterminate(boolean isIndeterminate){
-        circle.setIndeterminate(isIndeterminate);
-    }
-
-    public int getMax() {
-
-        return circle.getMax();
-    }
-
-    public void setMax(int max) {
-        circle.setMax(max);
-    }
-
-    public boolean isSeePercentage() {
-        return circle.isSeePercentage();
-    }
-
-    public void setSeePercentage(boolean seePercentage) {
-        circle.setSeePercentage(seePercentage);
-    }
-
-    public int getPercentageColor() {
-        return circle.getPercentageColor();
-    }
-
-    public void setPercentageColor(int percentageColor) {
-        circle.setPercentageColor(percentageColor);
-    }
-
-
-    // ----------------------------------------------------------------------
-    // The rest of the implementation is for custom per-child layout parameters.
-    // If you do not need these (for example you are writing a layout manager
-    // that does fixed positioning of its children), you can drop all of this.
 
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
@@ -272,43 +181,80 @@ public class CircleProgressLayout extends ViewGroup {
 
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-        return p instanceof LayoutParams;
+        return p != null;
     }
 
-    /**
-     * Custom per-child layout information.
-     */
-    public static class LayoutParams extends MarginLayoutParams {
-        /**
-         * The gravity to apply with the View to which these layout parameters
-         * are associated.
-         */
-        public int gravity = Gravity.CENTER;
 
-        public static int POSITION_MIDDLE = 0;
-        public static int POSITION_LEFT = 1;
-        public static int POSITION_RIGHT = 2;
+    public void setShapeColor(int shapeColor) {
+        circle.setShapeColor(shapeColor);
+    }
 
-        public int position = POSITION_MIDDLE;
 
-        public LayoutParams(Context c, AttributeSet attrs) {
-            super(c, attrs);
+    public void setInitColor(int initColor) {
+        circle.setInitColor(initColor);
+    }
 
-            // Pull the layout param values from the layout XML during
-            // inflation.  This is not needed if you don't care about
-            // changing the layout behavior in XML.
-            TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.CustomLayoutLP);
-            gravity = a.getInt(R.styleable.CustomLayoutLP_android_layout_gravity, gravity);
-            position = a.getInt(R.styleable.CustomLayoutLP_layout_position, position);
-            a.recycle();
-        }
+    public void setEndColor(int endColor) {
+        circle.setEndColor(endColor);
+    }
 
-        public LayoutParams(int width, int height) {
-            super(width, height);
-        }
+    public void setTrackColor(int color) {
+        circle.setTrackColor(color);
+    }
 
-        public LayoutParams(ViewGroup.LayoutParams source) {
-            super(source);
-        }
+    public float getProgress() {
+        return circle.getProgress();
+    }
+
+    public void setProgress(int progress) {
+        circle.setProgress(progress);
+    }
+
+    public int getStartAngle() {
+        return circle.getStartAngle();
+    }
+
+    public void setStartAngle(int startAngle) {
+        circle.setStartAngle(startAngle);
+    }
+
+    public int getStrokeProgress() {
+        return circle.getStrokeProgress();
+    }
+
+    public void setStrokeProgress(int strokeProgress) {
+        circle.setStrokeProgress(strokeProgress);
+    }
+
+
+    public int getDegrees() {
+        return circle.getDegrees();
+    }
+
+    public void setDegrees(int degrees) {
+        circle.setDegrees(degrees);
+    }
+
+
+    public int getMax() {
+        return circle.getMax();
+    }
+
+    public void setMax(int max) {
+        circle.setMax(max);
+    }
+
+    public void setGradient(int gradient) {
+        circle.setGradient(gradient);
+    }
+
+    public void setProgressWithAnimation(int progress) {
+        circle.setProgressWithAnimation(progress);
+    }
+
+    public void setIndeterminate(boolean isIndeterminate) {
+        circle.setIndeterminate(isIndeterminate);
     }
 }
+
+

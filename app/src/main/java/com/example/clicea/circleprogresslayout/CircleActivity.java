@@ -5,54 +5,63 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
 public class CircleActivity extends AppCompatActivity {
 
 
     CircleProgressLayout mNewCustomViewGroup;
-    com.example.clicea.circleprogresslayout.likePitz.CircleProgressLayout mPitz;
+    CircleProgressLayout mPitzLinear;
+    CircleProgressLayout mPitzSwe;
+    CircleProgressLayout mDefault;
 
     Button btn;
 
-    int progreso = 0;
-    private Handler progressBarbHandler = new Handler();
 
-    Thread t;
+
+
+    Boolean indeterminate = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_circle);
-
-btn=(Button) findViewById(R.id.button);
-        mNewCustomViewGroup = (CircleProgressLayout) findViewById(R.id.circle_progress_bar);
-        mPitz = (com.example.clicea.circleprogresslayout.likePitz.CircleProgressLayout) findViewById(R.id.cpl_pitz);
-
-//mNewCustomViewGroup.setIndeterminate(true);
-//mOriginal.setIndeterminate(true);
-//mPitz.setIndeterminate(true);
+        btn = findViewById(R.id.button);
+        mNewCustomViewGroup = findViewById(R.id.cpl_pitz_radial);
+        mPitzLinear = findViewById(R.id.cpl_pitz);
+        mPitzSwe = findViewById(R.id.cpl_pitz_sweep);
+        mDefault = findViewById(R.id.cpl_default);
 
 
+        mNewCustomViewGroup.setIndeterminate(indeterminate);
+        mPitzSwe.setIndeterminate(indeterminate);
+        mPitzLinear.setIndeterminate(indeterminate);
+        mDefault.setIndeterminate(indeterminate);
 
-
-
-
-        SeekBar seekBar = (SeekBar) findViewById(R.id.seek);
+        SeekBar seekBar = findViewById(R.id.seek);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
+//                mNewCustomViewGroup.setProgress(progress);
+//                mPitzLinear.setProgress(progress);
+//                mPitzSwe.setProgress(progress);
+//                mDefault.setProgress(progress);
+
                 mNewCustomViewGroup.setProgressWithAnimation(progress);
-                mPitz.setProgressWithAnimation(progress);
+                mPitzLinear.setProgressWithAnimation(progress);
+                mPitzSwe.setProgressWithAnimation(progress);
+                mDefault.setProgressWithAnimation(progress);
 
 
 //                if (fromUser) {
 //                    mNewCustomViewGroup.setProgressWithAnimation(progress);
-//                    mPitz.setProgressWithAnimation(progress);
+//                    mPitzLinear.setProgressWithAnimation(progress);
 //                } else {
 //                    mNewCustomViewGroup.setProgress(progress);
-//                    mPitz.setProgress(progress);
+//                    mPitzLinear.setProgress(progress);
 //                }
             }
 
@@ -70,43 +79,21 @@ btn=(Button) findViewById(R.id.button);
 //        mNewCustomViewGroup.setProgress(progreso);
 
 
-         t=new Thread(new Runnable() {
-            public void run() {
-                while (true) {
-                    progreso += 1;
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    progressBarbHandler.post(new Runnable() {
-                        public void run() {
-                            mNewCustomViewGroup.setProgress(progreso);
-                            mPitz.setProgress(progreso);
-
-                        }
-                    });
-
-                    if (progreso == 100) {
-                        progreso = 0;
-                    }
-                }
-            }
-        });
-
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                t.start();
+
+                indeterminate = !indeterminate;
+                mNewCustomViewGroup.setIndeterminate(indeterminate);
+                mPitzSwe.setIndeterminate(indeterminate);
+                mPitzLinear.setIndeterminate(indeterminate);
+                mDefault.setIndeterminate(indeterminate);
+
+
             }
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        t.stop();
-    }
+
 }
